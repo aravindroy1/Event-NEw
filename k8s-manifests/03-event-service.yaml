@@ -1,0 +1,83 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: event-service-config
+  namespace: event-management
+data:
+  PORT: "3002"
+  MONGO_URI: "mongodb://event-mongo:27017/event-service"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-service
+  namespace: event-management
+  labels:
+    app: event-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: event-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: event-service
+    spec:
+      containers:
+      - name: event-service
+        image: event-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3002
+        envFrom:
+        - configMapRef:
+            name: event-service-config
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "250m"
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-service
+  namespace: event-management
+  labels:
+    app: event-service
+spec:
+  type: ClusterIP
+  selector:
+    app: event-service
+  ports:
+  - port: 80
+    targetPort: 3002
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: event-service-hpa
+  namespace: event-management
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: event-service
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
