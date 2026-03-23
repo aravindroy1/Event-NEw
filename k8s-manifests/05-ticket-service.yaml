@@ -41,11 +41,11 @@ spec:
             name: ticket-service-config
         resources:
           requests:
+            cpu: "50m"
+            memory: "64Mi"
+          limits:
             cpu: "100m"
             memory: "128Mi"
-          limits:
-            cpu: "250m"
-            memory: "256Mi"
 ---
 apiVersion: v1
 kind: Service
