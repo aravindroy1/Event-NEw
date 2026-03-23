@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - name: event-service
-        image: event-service:latest
+        image: aravindroy1/event-service:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3002
