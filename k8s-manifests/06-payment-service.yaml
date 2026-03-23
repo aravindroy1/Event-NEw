@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - name: payment-service
-        image: payment-service:latest
+        image: aravindroy1/payment-service:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3005
