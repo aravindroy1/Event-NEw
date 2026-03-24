@@ -5,7 +5,7 @@ metadata:
   name: main-gateway
   namespace: event-management
 spec:
-  gatewayClassName: eg
+  gatewayClassName: kgateway
   listeners:
   - name: http
     protocol: HTTP
